@@ -1,14 +1,16 @@
 
 
 # 使用 Bun 官方镜像
+
 FROM oven/bun:1.1.13-alpine AS builder
 WORKDIR /app
 
-# 复制依赖文件并安装依赖
+# 安装构建依赖
+RUN apk add --no-cache python3 make g++ libstdc++
+
 COPY package.json bun.lockb ./
 RUN bun install --frozen-lockfile
 
-# 复制全部代码并构建
 COPY . .
 RUN bun run build
 
