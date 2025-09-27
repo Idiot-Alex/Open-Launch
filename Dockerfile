@@ -1,26 +1,22 @@
-# 安全版本的 Dockerfile
-FROM oven/bun:1.0.25-alpine
-
-# 只声明非敏感的环境变量
-ENV NODE_ENV=production
-ENV PORT=3000
+FROM oven/bun:1.0.25-alpine as dependencies
 
 WORKDIR /app
-
-# 复制依赖文件
 COPY package.json bun.lockb ./
+RUN bun i --frozen-lockfile
 
-# 安装依赖（不涉及敏感数据）
-RUN bun i
+# 使用 Node.js 进行 Next.js 构建
+FROM node:18-alpine as builder
 
-# 复制源代码
+WORKDIR /app
+COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 
-# 构建应用（如果需要）
-RUN bun run build
+# 使用 Node.js 运行构建
+RUN npm run build
 
-# 暴露端口
-EXPOSE 3000
-
-# 启动命令 - 敏感数据通过运行时环境变量注入
+FROM oven/bun:1.0.25-alpine as production
+WORKDIR /app
+COPY --from=dependencies /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/package.json ./
 CMD ["bun", "run", "start"]
