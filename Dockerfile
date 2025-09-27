@@ -15,7 +15,7 @@ COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 
 # 构建应用
-RUN npm run build
+RUN pnpm run build
 
 # 生产环境阶段
 FROM node:18-alpine AS production
@@ -35,4 +35,4 @@ COPY --from=builder /app/next.config.ts ./next.config.ts
 EXPOSE 3000
 
 # 启动应用
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]
