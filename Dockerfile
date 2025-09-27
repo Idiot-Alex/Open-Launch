@@ -1,37 +1,34 @@
 
-# 安装依赖阶段
-FROM node:18-alpine AS dependencies
-WORKDIR /app
-COPY package.json pnpm-lock.yaml* ./
-RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
-# 构建阶段
-FROM node:18-alpine AS builder
+# 使用 Bun 官方镜像
+FROM oven/bun:1.1.13-alpine AS builder
 WORKDIR /app
+
+# 复制依赖文件并安装依赖
+COPY package.json bun.lockb ./
+RUN bun install --frozen-lockfile
+
+# 复制全部代码并构建
 COPY . .
-COPY --from=dependencies /app/node_modules ./node_modules
-RUN pnpm run build
+RUN bun run build
 
-# 生产环境阶段
-FROM node:18-alpine AS production
+# 生产环境镜像
+FROM oven/bun:1.1.13-alpine
 WORKDIR /app
-ENV NODE_ENV=production
 
-# 只安装生产依赖
-COPY package.json pnpm-lock.yaml* ./
-RUN npm install -g pnpm && pnpm install --prod --frozen-lockfile
-
-# 复制构建产物和静态资源
+# 只复制必要文件
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/bun.lockb ./
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.js ./next.config.js
 COPY --from=builder /app/next.config.mjs ./next.config.mjs
 COPY --from=builder /app/next.config.ts ./next.config.ts
-
-# 如有 .env 文件可解开注释
+# 如有 .env 可解开注释
 # COPY --from=builder /app/.env ./.env
 
 EXPOSE 3000
 
 # 启动 Next.js
-CMD ["pnpm", "exec", "next", "start"]
+CMD ["bun", "run", "start"]
