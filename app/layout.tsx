@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Outfit as FontHeading, Inter as FontSans } from "next/font/google"
+// import { Outfit as FontHeading, Inter as FontSans } from "next/font/google"
 
 import PlausibleProvider from "next-plausible"
 import { Toaster } from "sonner"
@@ -10,15 +10,15 @@ import { ThemeProvider } from "@/components/theme/theme-provider"
 
 import "./globals.css"
 
-const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-})
+// const fontSans = FontSans({
+//   subsets: ["latin"],
+//   variable: "--font-sans",
+// })
 
-const fontHeading = FontHeading({
-  subsets: ["latin"],
-  variable: "--font-heading",
-})
+// const fontHeading = FontHeading({
+//   subsets: ["latin"],
+//   variable: "--font-heading",
+// })
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_URL!),
@@ -70,8 +70,9 @@ export default function RootLayout({
           enabled={process.env.NODE_ENV === "production"}
         />
       </head>
+      {/* ${fontSans.variable} ${fontHeading.variable} */}
       <body
-        className={`font-sans antialiased ${fontSans.variable} ${fontHeading.variable} sm:overflow-y-scroll`}
+        className={`font-sans antialiased sm:overflow-y-scroll`}
         suppressHydrationWarning
       >
         <ThemeProvider
