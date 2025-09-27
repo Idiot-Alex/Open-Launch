@@ -2,7 +2,7 @@ FROM oven/bun:1.0.25-alpine as dependencies
 
 WORKDIR /app
 COPY package.json bun.lockb ./
-RUN bun i --frozen-lockfile
+RUN bun i
 
 # 使用 Node.js 进行 Next.js 构建
 FROM node:18-alpine as builder
