@@ -2,15 +2,14 @@
 
 # 使用 Bun 官方镜像
 
-FROM oven/bun:1.1.13-alpine AS builder
+
+# builder 阶段用 Node.js
+FROM node:18-alpine AS builder
 WORKDIR /app
 
-# 安装构建依赖
 RUN apk add --no-cache python3 make g++ libstdc++
-
 COPY package.json bun.lockb ./
-RUN bun install --frozen-lockfile
-
+RUN npm install -g bun && bun install --frozen-lockfile
 COPY . .
 RUN bun run build
 
