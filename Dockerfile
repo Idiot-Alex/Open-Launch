@@ -11,7 +11,7 @@ WORKDIR /app
 COPY package.json bun.lockb ./
 
 # 安装依赖（不涉及敏感数据）
-RUN bun i --frozen-lockfile
+RUN bun i
 
 # 复制源代码
 COPY . .
