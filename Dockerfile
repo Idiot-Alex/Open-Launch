@@ -9,7 +9,7 @@ WORKDIR /app
 
 RUN apk add --no-cache python3 make g++ libstdc++
 COPY package.json bun.lockb ./
-RUN npm install -g bun && bun install --frozen-lockfile
+RUN npm install -g bun && bun install --no-cache --frozen-lockfile
 COPY . .
 RUN bun run build
 
